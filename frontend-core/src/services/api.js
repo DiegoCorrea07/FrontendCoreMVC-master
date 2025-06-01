@@ -1,5 +1,4 @@
-const BASE = 'http://localhost:8888' // Asegúrate de que esta URL sea correcta para tu backend
-
+const BASE = 'https://administracion-core-mvc.onrender.com'
 export async function login(username, password) {
   const res = await fetch(`${BASE}/login`, {
     method: 'POST',

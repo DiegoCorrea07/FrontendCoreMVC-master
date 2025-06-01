@@ -1,0 +1,62 @@
+
+.section {
+  padding: 1rem;
+}
+
+.section__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.section__table th,
+.section__table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.section__table th {
+  background-color: #000000;
+  color: white;
+}
+
+.section__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+}
+
+.section__form input,
+.section__form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.section__add {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.section__add:hover {
+  background-color: #1d4ed8;
+}
+
+.section__delete {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.section__delete:hover {
+  background-color: #b91c1c;
+}

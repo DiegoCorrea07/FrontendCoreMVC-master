@@ -1,0 +1,156 @@
+.route-details-container {
+  padding: 20px;
+  background-color: #f0f2f5;
+  border-radius: 8px;
+}
+
+.route-details-header {
+  margin-bottom: 20px;
+}
+
+.route-details-header h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.breadcrumb {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.route-info-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.route-info-cards .card {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.route-info-cards .card p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.route-status {
+  font-weight: bold;
+  color: #d9534f; /* Color por defecto para crítico */
+}
+
+.route-status.cubierto {
+    color: #5cb85c; /* Green */
+}
+
+.route-status.parcial {
+    color: #f0ad4e; /* Yellow */
+}
+
+.route-status.critico {
+    color: #d9534f; /* Red */
+}
+
+
+.coverage-section h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.bar-chart-container {
+  display: flex;
+  align-items: flex-end; /* Alinea las barras desde abajo */
+  gap: 15px; /* Espacio entre las columnas de las barras */
+  height: 200px; /* Altura máxima del gráfico */
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.bar-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end; /* Asegura que la barra empiece desde abajo */
+  height: 100%; /* La columna ocupa toda la altura del contenedor */
+  flex-grow: 1; /* Distribuye el espacio uniformemente */
+}
+
+.bar {
+  width: 30px; /* Ancho de la barra */
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease-in-out;
+  display: flex; /* Para centrar el texto de porcentaje */
+  align-items: center;
+  justify-content: center;
+  color: white; /* Color del texto del porcentaje */
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.bar.red-coverage { background-color: #d9534f; } /* Rojo para crítico */
+.bar.yellow-coverage { background-color: #f0ad4e; } /* Amarillo para parcial */
+.bar.green-coverage { background-color: #5cb85c; } /* Verde para cubierto */
+
+
+.bar-label {
+  margin-top: 5px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.bar-value {
+    margin-top: 2px;
+    font-size: 0.7em;
+    color: #444; /* Color para el valor del porcentaje */
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #e6e6e6; /* Un ligero cambio de color al pasar el mouse */
+}
+
+.back-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* También podrías necesitar ajustar los estilos de .summary-card y .status-badge si están en CoverageDashboard.css */
+.summary-card {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.summary-card.covered { background-color: #d4edda; color: #155724; } /* Green */
+.summary-card.partial { background-color: #fff3cd; color: #856404; } /* Yellow */
+.summary-card.critical { background-color: #f8d7da; color: #721c24; } /* Red */
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+}
+
+.status-badge.cubierto { background-color: #5cb85c; }
+.status-badge.parcial { background-color: #f0ad4e; }
+.status-badge.critico { background-color: #d9534f; }

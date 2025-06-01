@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getAll, createOne, deleteOne } from '../services/api.js';
-import './Styles.css'; // Asumiendo que tienes un archivo CSS general
+import './Styles.css';
 
 export default function EventRoute({ token }) {
   const [list, setList] = useState([]);
@@ -19,15 +19,15 @@ export default function EventRoute({ token }) {
     try {
       // Cargar rutas de evento existentes
       const dataEventRoutes = await getAll('event_routes', token);
-      setList(dataEventRoutes.event_routes || []); // Asegurarse de que sea un array
+      setList(dataEventRoutes.event_routes || []);
 
       // Cargar opciones para los dropdowns de Rutas
       const dataRutas = await getAll('routes', token);
-      setRutas(dataRutas.routes || []); // Asumiendo que el backend devuelve { routes: [...] }
+      setRutas(dataRutas.routes || []);
 
       // Cargar opciones para los dropdowns de Eventos
       const dataEventos = await getAll('events', token);
-      setEventos(dataEventos.events || []); // Asumiendo que el backend devuelve { events: [...] }
+      setEventos(dataEventos.events || []);
 
     } catch (error) {
       console.error('Error al cargar datos en EventRoute:', error);
@@ -43,12 +43,11 @@ export default function EventRoute({ token }) {
   // Función para agregar una ruta de evento
   const add = async () => {
     try {
-      // Asegurarse de que los IDs sean números y la demanda sea un número
       const payload = {
         ...form,
         ruta_id: parseInt(form.ruta_id),
         evento_id: parseInt(form.evento_id),
-        demanda_estimada: parseFloat(form.demanda_estimada), // Usar parseFloat para demanda
+        demanda_estimada: parseFloat(form.demanda_estimada),
       };
 
       await createOne('event_routes', payload, token);
@@ -94,7 +93,6 @@ export default function EventRoute({ token }) {
           {list.map((er) => (
             <tr key={er.id}>
               <td>{er.id}</td>
-              {/* Acceder a las propiedades anidadas de forma segura */}
               <td>
                 {er.ruta && er.ruta.origen && er.ruta.destino
                   ? `${er.ruta.origen}-${er.ruta.destino}`
@@ -118,7 +116,6 @@ export default function EventRoute({ token }) {
 
       <h3>Agregar Ruta de Evento</h3>
       <div className="section__form">
-        {/* Dropdown para seleccionar la Ruta */}
         <select
           value={form.ruta_id}
           onChange={(e) => setForm({ ...form, ruta_id: e.target.value })}
@@ -131,7 +128,6 @@ export default function EventRoute({ token }) {
           ))}
         </select>
 
-        {/* Dropdown para seleccionar el Evento */}
         <select
           value={form.evento_id}
           onChange={(e) => setForm({ ...form, evento_id: e.target.value })}
@@ -143,10 +139,8 @@ export default function EventRoute({ token }) {
             </option>
           ))}
         </select>
-
-        {/* Campo de entrada para la Demanda Estimada */}
         <input
-          type="number" // Para asegurar que es un número
+          type="number"
           placeholder="Demanda Estimada"
           value={form.demanda_estimada}
           onChange={(e) => setForm({ ...form, demanda_estimada: e.target.value })}

@@ -39,19 +39,19 @@
 
 .route-status {
   font-weight: bold;
-  color: #d9534f; /* Color por defecto para crítico */
+  color: #d9534f;
 }
 
 .route-status.cubierto {
-    color: #5cb85c; /* Green */
+    color: #5cb85c;
 }
 
 .route-status.parcial {
-    color: #f0ad4e; /* Yellow */
+    color: #f0ad4e;
 }
 
 .route-status.critico {
-    color: #d9534f; /* Red */
+    color: #d9534f;
 }
 
 
@@ -62,9 +62,9 @@
 
 .bar-chart-container {
   display: flex;
-  align-items: flex-end; /* Alinea las barras desde abajo */
-  gap: 15px; /* Espacio entre las columnas de las barras */
-  height: 200px; /* Altura máxima del gráfico */
+  align-items: flex-end;
+  gap: 15px;
+  height: 200px;
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
@@ -74,26 +74,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; /* Asegura que la barra empiece desde abajo */
-  height: 100%; /* La columna ocupa toda la altura del contenedor */
-  flex-grow: 1; /* Distribuye el espacio uniformemente */
+  justify-content: flex-end;
+  height: 100%;
+  flex-grow: 1;
 }
 
 .bar {
-  width: 30px; /* Ancho de la barra */
+  width: 30px;
   border-radius: 3px 3px 0 0;
   transition: height 0.3s ease-in-out;
-  display: flex; /* Para centrar el texto de porcentaje */
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: white; /* Color del texto del porcentaje */
+  color: white;
   font-size: 0.8em;
   font-weight: bold;
 }
 
-.bar.red-coverage { background-color: #d9534f; } /* Rojo para crítico */
-.bar.yellow-coverage { background-color: #f0ad4e; } /* Amarillo para parcial */
-.bar.green-coverage { background-color: #5cb85c; } /* Verde para cubierto */
+.bar.red-coverage { background-color: #d9534f; }
+.bar.yellow-coverage { background-color: #f0ad4e; }
+.bar.green-coverage { background-color: #5cb85c; }
 
 
 .bar-label {
@@ -105,7 +105,7 @@
 .bar-value {
     margin-top: 2px;
     font-size: 0.7em;
-    color: #444; /* Color para el valor del porcentaje */
+    color: #444;
 }
 
 .clickable-row {
@@ -113,7 +113,7 @@
 }
 
 .clickable-row:hover {
-    background-color: #e6e6e6; /* Un ligero cambio de color al pasar el mouse */
+    background-color: #e6e6e6;
 }
 
 .back-button {
@@ -131,7 +131,7 @@
   background-color: #0056b3;
 }
 
-/* También podrías necesitar ajustar los estilos de .summary-card y .status-badge si están en CoverageDashboard.css */
+
 .summary-card {
     padding: 15px;
     border-radius: 8px;
@@ -139,9 +139,9 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.summary-card.covered { background-color: #d4edda; color: #155724; } /* Green */
-.summary-card.partial { background-color: #fff3cd; color: #856404; } /* Yellow */
-.summary-card.critical { background-color: #f8d7da; color: #721c24; } /* Red */
+.summary-card.covered { background-color: #d4edda; color: #155724; }
+.summary-card.partial { background-color: #fff3cd; color: #856404; }
+.summary-card.critical { background-color: #f8d7da; color: #721c24; }
 
 .status-badge {
     padding: 5px 10px;

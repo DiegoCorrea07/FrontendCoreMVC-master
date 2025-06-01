@@ -8,24 +8,48 @@ import EventRoute from './EventRoute';
 import User from './User.jsx'
 import './Dashboard.css'
 
-export default function Dashboard({ token, onLogout }) {
+export default function Dashboard({ token, role, onLogout }) {
   const [tab, setTab] = useState('Dashboard Cobertura')
+
   const mapping = {
-    'Dashboard Cobertura': <CoverageDashboard token={token}/>,
-    'Aeronaves':          <Aircraft    token={token} />,
-    'Rutas':              <Route       token={token} />,
-    'Eventos':            <Event       token={token} />,
+    'Dashboard Cobertura': <CoverageDashboard token={token} />,
+    'Aeronaves': <Aircraft token={token} />,
+    'Rutas': <Route token={token} />,
+    'Eventos': <Event token={token} />,
     'Rutas de Evento': <EventRoute token={token} />,
-    'Vuelos':             <Flight      token={token} />,
-    'Usuarios':           <User        token={token} />,
+    'Vuelos': <Flight token={token} />,
+    'Usuarios': <User token={token} />,
   }
+
+  // Define qué secciones puede ver cada rol
+  const SECCIONES_VISIBLES = {
+    admin: [
+      'Dashboard Cobertura',
+      'Aeronaves',
+      'Rutas',
+      'Eventos',
+      'Rutas de Evento',
+      'Vuelos',
+      'Usuarios',
+    ],
+    planner: [
+      'Dashboard Cobertura',
+      'Aeronaves',
+      'Rutas',
+      'Eventos',
+      'Rutas de Evento',
+      'Vuelos',
+    ]
+  }
+
+  const secciones = SECCIONES_VISIBLES[role] || []
 
   return (
     <div className="dashboard">
       <aside className="sidebar">
         <h2 className="sidebar__title">Administrador</h2>
         <div className="sidebar__menu">
-          {Object.keys(mapping).map(label => (
+          {secciones.map(label => (
             <button
               key={label}
               className={`sidebar__menu-item ${label === tab ? 'active' : ''}`}
@@ -40,7 +64,7 @@ export default function Dashboard({ token, onLogout }) {
         </button>
       </aside>
       <main className="content">
-        {mapping[tab]}
+        {secciones.includes(tab) ? mapping[tab] : <p>Acceso no autorizado.</p>}
       </main>
     </div>
   )

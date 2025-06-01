@@ -27,7 +27,6 @@ export async function getAll(resource, token) {
   return json
 }
 
-// *** NUEVA FUNCIÓN PARA OBTENER UN RECURSO ESPECÍFICO POR RUTA (ej. detalles de ruta) ***
 export async function getOne(resourcePath, token) {
   try {
     const response = await fetch(`${BASE}/${resourcePath}`, {

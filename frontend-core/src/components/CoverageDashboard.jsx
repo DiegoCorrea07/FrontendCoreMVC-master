@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getAll, getOne } from '../services/api.js'; // Importar getOne para las rutas detalladas
+import { getAll, getOne } from '../services/api.js';
 import './CoverageDashboard.css';
-import RouteDetails from './RouteDetails.jsx'; // Importa el nuevo componente RouteDetails
+import RouteDetails from './RouteDetails.jsx';
 
 export default function CoverageDashboard({ token }) {
   const [dashboardData, setDashboardData] = useState([]);
@@ -26,7 +26,7 @@ export default function CoverageDashboard({ token }) {
       const data = await getAll('events', token);
       setEvents(data.events || []);
       if (data.events && data.events.length > 0) {
-        setSelectedEventId(data.events[0].id.toString()); // Asegurarse de que sea string si el select usa strings
+        setSelectedEventId(data.events[0].id.toString());
       }
     } catch (error) {
       console.error('Error al cargar eventos:', error);
@@ -49,9 +49,9 @@ export default function CoverageDashboard({ token }) {
       setError(null);
       let url = `coverage/dashboard?event_id=${selectedEventId}&page=${currentPage}&limit=${itemsPerPage}`;
       if (statusFilter) {
-        url += `&status_filter=${statusFilter}`; // Asegúrate que el parámetro sea 'status_filter' si así lo espera tu backend
+        url += `&status_filter=${statusFilter}`;
       }
-      const data = await getAll(url, token); // Sigue usando getAll para el dashboard ya que maneja parámetros de query
+      const data = await getAll(url, token);
       setDashboardData(data.dashboard_data || []);
       setSummaryMetrics(data.summary_metrics || { cubiertas: 0, parciales: 0, criticas: 0 });
       setTotalPages(data.total_pages || 1);

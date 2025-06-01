@@ -28,18 +28,18 @@
 
 
 .metric-card.status-covered {
-  background-color: #e6ffe6; /* Verde muy claro */
-  border: 1px solid #4CAF50; /* Verde oscuro */
+  background-color: #e6ffe6;
+  border: 1px solid #4CAF50;
 }
 
 .metric-card.status-partial {
-  background-color: #fffacd; /* Amarillo muy claro */
-  border: 1px solid #FFC107; /* Naranja/Amarillo */
+  background-color: #fffacd;
+  border: 1px solid #FFC107;
 }
 
 .metric-card.status-critical {
-  background-color: #ffe6e6; /* Rojo muy claro */
-  border: 1px solid #F44336; /* Rojo oscuro */
+  background-color: #ffe6e6;
+  border: 1px solid #F44336;
 }
 
 
@@ -54,15 +54,15 @@
 }
 
 .status-pill.status-covered {
-  background-color: #4CAF50; /* Verde */
+  background-color: #4CAF50;
 }
 
 .status-pill.status-partial {
-  background-color: #FFC107; /* Naranja/Amarillo */
+  background-color: #FFC107;
 }
 
 .status-pill.status-critical {
-  background-color: #F44336; /* Rojo */
+  background-color: #F44336;
 }
 
 /* Estilos de paginación */
@@ -87,7 +87,7 @@
 }
 
 .pagination-button.active {
-  background-color: #007bff; /* Color primario de tu tema */
+  background-color: #007bff;
   color: white;
   border-color: #007bff;
 }

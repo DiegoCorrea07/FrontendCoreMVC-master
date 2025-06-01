@@ -9,7 +9,7 @@ export default function Flight({ token }) {
     fecha_salida: '',
     fecha_llegada: '',
     ruta_evento_id: '',
-    aeronave_id: '' // <-- ¡Añade 'aeronave_id' aquí!
+    aeronave_id: ''
   });
 
   // Estado para las opciones de las rutas de eventos y aeronaves
@@ -39,22 +39,20 @@ export default function Flight({ token }) {
     load();
   }, [load]);
 
-  // Función para agregar un vuelo
   const add = async () => {
     try {
-      // Asegúrate de que los IDs se parseen a enteros antes de enviar
       const payload = {
         ...form,
         ruta_evento_id: parseInt(form.ruta_evento_id),
-        aeronave_id: parseInt(form.aeronave_id) // <-- ¡Asegúrate de que 'aeronave_id' se parsee a entero!
+        aeronave_id: parseInt(form.aeronave_id)
       };
-      await createOne('flights', payload, token); // Envía el payload modificado
+      await createOne('flights', payload, token);
       setForm({
         codigo_vuelo: '',
         fecha_salida: '',
         fecha_llegada: '',
         ruta_evento_id: '',
-        aeronave_id: '' // <-- ¡Reinicia 'aeronave_id' también!
+        aeronave_id: ''
       });
       load();
       alert('Vuelo creado exitosamente');
@@ -122,7 +120,7 @@ export default function Flight({ token }) {
               </select>
             );
           }
-          if (k === 'aeronave_id') { // <-- ¡Este bloque ya estaba correcto!
+          if (k === 'aeronave_id') {
             return (
               <select
                 key={k}
@@ -141,7 +139,7 @@ export default function Flight({ token }) {
             <input
               key={k}
               type={k.includes('fecha') ? 'datetime-local' : 'text'}
-              placeholder={k.replace('_', ' ')} // Opcional: mejora el placeholder
+              placeholder={k.replace('_', ' ')}
               value={form[k]}
               onChange={e => setForm({ ...form, [k]: e.target.value })}
             />

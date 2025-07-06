@@ -1,76 +1,95 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getAll, createOne, deleteOne } from '../services/api.js';
+// 1. Importamos la función updateOne de la API
+import { getAll, createOne, updateOne, deleteOne } from '../services/api.js';
+import FlightManifest from './FlightManifest';
+import Modal from './Modal';
+import FlightForm from './FlightForm';
 import './Styles.css';
 
 export default function Flight({ token }) {
   const [list, setList] = useState([]);
-  const [form, setForm] = useState({
-    codigo_vuelo: '',
-    fecha_salida: '',
-    fecha_llegada: '',
-    ruta_evento_id: '',
-    aeronave_id: ''
-  });
-
-  // Estado para las opciones de las rutas de eventos y aeronaves
   const [eventRoutes, setEventRoutes] = useState([]);
   const [aeronaves, setAeronaves] = useState([]);
+  const [viewingManifestId, setViewingManifestId] = useState(null);
 
-  // Función para cargar los vuelos y las opciones para los selects
+  // 2. Renombramos el estado para que sea más genérico
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // 3. Nuevo estado para guardar el vuelo que se está editando
+  const [editingFlight, setEditingFlight] = useState(null);
+
   const load = useCallback(async () => {
     try {
-      const data = await getAll('flights', token);
-      setList(data.flights);
-
-      const dataEventRoutes = await getAll('event_routes', token);
-      setEventRoutes(dataEventRoutes.event_routes);
-
-      const dataAeronaves = await getAll('aircrafts', token);
-      setAeronaves(dataAeronaves.aircrafts);
-
+      // Optimizamos las llamadas a la API para que se ejecuten en paralelo
+      const [flightsData, eventRoutesData, aeronavesData] = await Promise.all([
+        getAll('flights', token),
+        getAll('event_routes', token),
+        getAll('aircrafts', token)
+      ]);
+      setList(flightsData.flights);
+      setEventRoutes(eventRoutesData.event_routes);
+      setAeronaves(aeronavesData.aircrafts);
     } catch (error) {
       console.error('Error al cargar datos en Flight:', error);
-      // Manejar el error, por ejemplo, mostrando un mensaje al usuario
     }
   }, [token]);
 
-  // Cargar los datos al montar el componente
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
-  const add = async () => {
+  // 4. Funciones para manejar la apertura y cierre del modal
+  const handleOpenAddModal = () => {
+    setEditingFlight(null); // Nos aseguramos de que no haya datos de edición
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (flight) => {
+    setEditingFlight(flight); // Guardamos el vuelo a editar
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingFlight(null);
+  };
+
+  // 5. La función handleSave ahora maneja tanto crear como actualizar
+  const handleSave = async (formData) => {
     try {
-      const payload = {
-        ...form,
-        ruta_evento_id: parseInt(form.ruta_evento_id),
-        aeronave_id: parseInt(form.aeronave_id)
-      };
-      await createOne('flights', payload, token);
-      setForm({
-        codigo_vuelo: '',
-        fecha_salida: '',
-        fecha_llegada: '',
-        ruta_evento_id: '',
-        aeronave_id: ''
-      });
+      if (editingFlight) {
+        // Si estamos editando, llamamos a updateOne
+        await updateOne('flights', editingFlight.id, formData, token);
+        alert('Vuelo actualizado correctamente.');
+      } else {
+        // Si no, llamamos a createOne
+        await createOne('flights', formData, token);
+        alert('Vuelo creado correctamente.');
+      }
       load();
-      alert('Vuelo creado exitosamente');
+      handleCloseModal(); // Cierra el modal y resetea el estado
     } catch (error) {
-      console.error('Error al crear vuelo:', error.message);
+      console.error('Error al guardar vuelo:', error.message);
       alert(`Error: ${error.message}`);
     }
   };
 
-  // Función para eliminar un vuelo
-  const del = async id => {
-    await deleteOne('flights', id, token);
-    load();
+  const del = async (id) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este vuelo?')) {
+      await deleteOne('flights', id, token);
+      load();
+    }
+  };
+
+  const handleViewManifest = (flightId) => {
+    setViewingManifestId(flightId);
   };
 
   return (
     <div className="section">
-      <h2>Vuelos</h2>
+      <div className="section-header">
+        <h2>Vuelos</h2>
+        <button className="section__add" onClick={handleOpenAddModal}>
+          Agregar
+        </button>
+      </div>
 
       <table className="section__table">
         <thead>
@@ -87,66 +106,41 @@ export default function Flight({ token }) {
         <tbody>
           {list.map(f => (
             <tr key={f.id}>
-              <td>{f.id}</td>
-              <td>{f.codigo_vuelo}</td>
-              <td>{f.fecha_salida}</td>
-              <td>{f.fecha_llegada}</td>
-              <td>{f.ruta_evento ? `${f.ruta_evento.ruta.origen}-${f.ruta_evento.ruta.destino} (${f.ruta_evento.evento.nombre_evento})` : f.ruta_evento_id}</td>
-              <td>{f.aeronave ? f.aeronave.matricula : f.aeronave_id}</td>
+              <td>{f.id}</td><td>{f.codigo_vuelo}</td><td>{new Date(f.fecha_salida).toLocaleString()}</td><td>{new Date(f.fecha_llegada).toLocaleString()}</td><td>{f.ruta_evento ? `${f.ruta_evento.ruta.origen}-${f.ruta_evento.ruta.destino} (${f.ruta_evento.evento.nombre_evento})` : f.ruta_evento_id}</td><td>{f.aeronave ? f.aeronave.matricula : f.aeronave_id}</td>
               <td>
-                <button className="section__delete" onClick={() => del(f.id)}>Eliminar</button>
+                <div className="actions-group">
+                  <button className="section__view" onClick={() => handleViewManifest(f.id)}>Manifiesto</button>
+                  {/* 6. Añadimos el botón de Editar */}
+                  <button className="section__edit" onClick={() => handleOpenEditModal(f)}>Editar</button>
+                  <button className="section__delete" onClick={() => del(f.id)}>Eliminar</button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h3>Agregar Vuelo</h3>
-      <div className="section__form">
-        {Object.keys(form).map(k => {
-          if (k === 'ruta_evento_id') {
-            return (
-              <select
-                key={k}
-                value={form[k]}
-                onChange={e => setForm({ ...form, [k]: parseInt(e.target.value) })}
-              >
-                <option value="">Seleccione Ruta de Evento</option>
-                {eventRoutes.map(er => (
-                  <option key={er.id} value={er.id}>
-                    {`${er.ruta.origen}-${er.ruta.destino} (${er.evento.nombre_evento})`}
-                  </option>
-                ))}
-              </select>
-            );
-          }
-          if (k === 'aeronave_id') {
-            return (
-              <select
-                key={k}
-                value={form[k]}
-                onChange={e => setForm({ ...form, [k]: parseInt(e.target.value) })}
-              >
-                <option value="">Seleccione Aeronave</option>
-                {aeronaves.map(a => (
-                  <option key={a.id} value={a.id}>{a.matricula}</option>
-                ))}
-              </select>
-            );
-          }
+      {/* 7. El modal ahora es dinámico */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={editingFlight ? 'Editar Vuelo' : 'Agregar Nuevo Vuelo'}
+      >
+        <FlightForm
+          onSave={handleSave}
+          initialData={editingFlight}
+          eventRoutes={eventRoutes}
+          aeronaves={aeronaves}
+        />
+      </Modal>
 
-          return (
-            <input
-              key={k}
-              type={k.includes('fecha') ? 'datetime-local' : 'text'}
-              placeholder={k.replace('_', ' ')}
-              value={form[k]}
-              onChange={e => setForm({ ...form, [k]: e.target.value })}
-            />
-          );
-        })}
-        <button className="section__add" onClick={add}>Crear Vuelo</button>
-      </div>
+      {viewingManifestId && (
+        <FlightManifest
+          flightId={viewingManifestId}
+          onClose={() => setViewingManifestId(null)}
+          token={token}
+        />
+      )}
     </div>
   );
 }

@@ -1,11 +1,12 @@
 const BASE = 'https://administracion-core-mvc.onrender.com'
+const API = 'https://api-manifest-flight.onrender.com'
 export async function login(username, password) {
   const res = await fetch(`${BASE}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
-  // Mejorar el manejo de errores para que lance una excepción si no es exitoso
+  // Mejora el manejo de errores para que lance una excepción si no es exitoso
   const json = await res.json()
   if (!res.ok) {
     // Si el backend devuelve un 'message' en el cuerpo del error, úsalo.
@@ -46,6 +47,28 @@ export async function getOne(resourcePath, token) {
     throw error;
   }
 }
+
+// --- NUEVA FUNCIÓN AÑADIDA ---
+export async function getFlightManifest(flightId, token) {
+  try {
+    // La URL coincide exactamente con la que definimos en el backend (app.py)
+    const response = await fetch(`${API}/api/flights/${flightId}/manifest`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || `Error al obtener el manifiesto para el vuelo ${flightId}.`);
+    }
+    return data;
+  } catch (error) {
+    console.error('API Error en getFlightManifest:', error);
+    throw error;
+  }
+}
+// ------------------------------
 
 export async function createOne(resource, data, token) {
   const res = await fetch(`${BASE}/${resource}`, {

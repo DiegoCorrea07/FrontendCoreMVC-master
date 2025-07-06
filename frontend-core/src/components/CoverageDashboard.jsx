@@ -11,7 +11,7 @@ export default function CoverageDashboard({ token }) {
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const [selectedRouteDetail, setSelectedRouteDetail] = useState(null);
   const [showRouteDetails, setShowRouteDetails] = useState(false);

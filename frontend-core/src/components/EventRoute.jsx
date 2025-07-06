@@ -1,83 +1,88 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getAll, createOne, deleteOne } from '../services/api.js';
+// 1. Importamos la función updateOne de la API
+import { getAll, createOne, updateOne, deleteOne } from '../services/api.js';
+import Modal from './Modal';
+import EventRouteForm from './EventRouteForm';
 import './Styles.css';
 
 export default function EventRoute({ token }) {
   const [list, setList] = useState([]);
-  const [form, setForm] = useState({
-    ruta_id: '',
-    evento_id: '',
-    demanda_estimada: '',
-  });
-
-  // Estados para las opciones de los dropdowns de Rutas y Eventos
   const [rutas, setRutas] = useState([]);
   const [eventos, setEventos] = useState([]);
 
-  // Función para cargar las rutas de evento y las opciones para los selects
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // 2. Nuevo estado para guardar la ruta de evento que se está editando
+  const [editingEventRoute, setEditingEventRoute] = useState(null);
+
   const load = useCallback(async () => {
     try {
-      // Cargar rutas de evento existentes
-      const dataEventRoutes = await getAll('event_routes', token);
-      setList(dataEventRoutes.event_routes || []);
-
-      // Cargar opciones para los dropdowns de Rutas
-      const dataRutas = await getAll('routes', token);
-      setRutas(dataRutas.routes || []);
-
-      // Cargar opciones para los dropdowns de Eventos
-      const dataEventos = await getAll('events', token);
-      setEventos(dataEventos.events || []);
-
+      const [eventRoutesData, rutasData, eventosData] = await Promise.all([
+        getAll('event_routes', token),
+        getAll('routes', token),
+        getAll('events', token)
+      ]);
+      setList(eventRoutesData.event_routes || []);
+      setRutas(rutasData.routes || []);
+      setEventos(eventosData.events || []);
     } catch (error) {
-      console.error('Error al cargar datos en EventRoute:', error);
-      alert('Error al cargar datos de Rutas de Evento.');
+      console.error('Error al cargar datos:', error);
+      alert('Error al cargar los datos iniciales.');
     }
   }, [token]);
 
-  // Cargar los datos al montar el componente
   useEffect(() => {
     load();
   }, [load]);
 
-  // Función para agregar una ruta de evento
-  const add = async () => {
-    try {
-      const payload = {
-        ...form,
-        ruta_id: parseInt(form.ruta_id),
-        evento_id: parseInt(form.evento_id),
-        demanda_estimada: parseFloat(form.demanda_estimada),
-      };
+  // 3. Funciones para manejar la apertura y cierre del modal
+  const handleOpenAddModal = () => {
+    setEditingEventRoute(null);
+    setIsModalOpen(true);
+  };
 
-      await createOne('event_routes', payload, token);
-      // Reiniciar el formulario
-      setForm({ ruta_id: '', evento_id: '', demanda_estimada: '' });
-      load(); // Volver a cargar la lista para ver el nuevo elemento
-      alert('Ruta de Evento creada exitosamente.');
+  const handleOpenEditModal = (eventRoute) => {
+    setEditingEventRoute(eventRoute);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingEventRoute(null);
+  };
+
+  // 4. La función handleSave ahora maneja tanto crear como actualizar
+  const handleSave = async (formData) => {
+    try {
+      if (editingEventRoute) {
+        await updateOne('event_routes', editingEventRoute.id, formData, token);
+        alert('Ruta de Evento actualizada correctamente.');
+      } else {
+        await createOne('event_routes', formData, token);
+        alert('Ruta de Evento creada correctamente.');
+      }
+      load();
+      handleCloseModal();
     } catch (error) {
-      console.error('Error al crear Ruta de Evento:', error.message);
-      alert(`Error al crear Ruta de Evento: ${error.message}`);
+      console.error('Error al guardar Ruta de Evento:', error.message);
+      alert(`Error: ${error.message}`);
     }
   };
 
-  // Función para eliminar una ruta de evento
   const del = async (id) => {
     if (window.confirm('¿Está seguro de que desea eliminar esta Ruta de Evento?')) {
-      try {
-        await deleteOne('event_routes', id, token);
-        load(); // Recargar la lista después de eliminar
-        alert('Ruta de Evento eliminada exitosamente.');
-      } catch (error) {
-        console.error('Error al eliminar Ruta de Evento:', error.message);
-        alert(`Error al eliminar Ruta de Evento: ${error.message}`);
-      }
+      await deleteOne('event_routes', id, token);
+      load();
     }
   };
 
   return (
     <div className="section">
-      <h2>Rutas de Evento</h2>
+      <div className="section-header">
+        <h2>Rutas de Evento</h2>
+        <button className="section__add" onClick={handleOpenAddModal}>
+          Agregar
+        </button>
+      </div>
 
       <table className="section__table">
         <thead>
@@ -93,63 +98,34 @@ export default function EventRoute({ token }) {
           {list.map((er) => (
             <tr key={er.id}>
               <td>{er.id}</td>
-              <td>
-                {er.ruta && er.ruta.origen && er.ruta.destino
-                  ? `${er.ruta.origen}-${er.ruta.destino}`
-                  : 'N/A'}
-              </td>
-              <td>
-                {er.evento && er.evento.nombre_evento
-                  ? er.evento.nombre_evento
-                  : 'N/A'}
-              </td>
+              <td>{er.ruta ? `${er.ruta.origen}-${er.ruta.destino}` : 'N/A'}</td>
+              <td>{er.evento ? er.evento.nombre_evento : 'N/A'}</td>
               <td>{er.demanda_estimada}</td>
               <td>
-                <button className="section__delete" onClick={() => del(er.id)}>
-                  Eliminar
-                </button>
+                <div className="actions-group">
+                  {/* 5. Añadimos el botón de Editar */}
+                  <button className="section__edit" onClick={() => handleOpenEditModal(er)}>Editar</button>
+                  <button className="section__delete" onClick={() => del(er.id)}>Eliminar</button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h3>Agregar Ruta de Evento</h3>
-      <div className="section__form">
-        <select
-          value={form.ruta_id}
-          onChange={(e) => setForm({ ...form, ruta_id: e.target.value })}
-        >
-          <option value="">Seleccione una Ruta</option>
-          {rutas.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.origen}-{r.destino}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={form.evento_id}
-          onChange={(e) => setForm({ ...form, evento_id: e.target.value })}
-        >
-          <option value="">Seleccione un Evento</option>
-          {eventos.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.nombre_evento}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          placeholder="Demanda Estimada"
-          value={form.demanda_estimada}
-          onChange={(e) => setForm({ ...form, demanda_estimada: e.target.value })}
+      {/* 6. El modal ahora es dinámico */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={editingEventRoute ? 'Editar Ruta de Evento' : 'Agregar Nueva Ruta de Evento'}
+      >
+        <EventRouteForm
+          onSave={handleSave}
+          initialData={editingEventRoute}
+          rutas={rutas}
+          eventos={eventos}
         />
-
-        <button className="section__add" onClick={add}>
-          Crear Ruta de Evento
-        </button>
-      </div>
+      </Modal>
     </div>
   );
 }

@@ -1,5 +1,4 @@
-const BASE = 'https://administracion-core-mvc.onrender.com'
-const API = 'https://api-manifest-flight.onrender.com'
+const BASE = 'http://localhost:8888'
 export async function login(username, password) {
   const res = await fetch(`${BASE}/login`, {
     method: 'POST',
@@ -52,7 +51,7 @@ export async function getOne(resourcePath, token) {
 export async function getFlightManifest(flightId, token) {
   try {
     // La URL coincide exactamente con la que definimos en el backend (app.py)
-    const response = await fetch(`${API}/api/flights/${flightId}/manifest`, {
+    const response = await fetch(`${BASE}/api/flights/${flightId}/manifest`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`

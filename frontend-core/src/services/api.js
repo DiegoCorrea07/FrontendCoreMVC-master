@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:8888'
+const BASE = 'https://administracion-core-mvc.onrender.com'
 export async function login(username, password) {
   const res = await fetch(`${BASE}/login`, {
     method: 'POST',
@@ -58,6 +58,9 @@ export async function getFlightManifest(flightId, token) {
       }
     });
     const data = await response.json();
+
+    console.log('Respuesta JSON del manifiesto:', data);
+
     if (!response.ok) {
       throw new Error(data.error || `Error al obtener el manifiesto para el vuelo ${flightId}.`);
     }
